@@ -19,6 +19,8 @@ type TransactionDetail struct {
 	HargaModal             float64   `gorm:"column:harga_modal" json:"harga_modal"`
 	CreatedAt              time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt              time.Time `gorm:"column:updated_at" json:"updated_at"`
+
+	Variant DeviceServiceVariant `json:"variant" gorm:"foreignKey:DeviceServiceVariantID"`
 }
 
 // TableName TransactionDetail's table name

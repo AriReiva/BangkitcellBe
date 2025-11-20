@@ -20,6 +20,7 @@ type Transaction struct {
 	Kembalian        float64   `gorm:"column:kembalian" json:"kembalian"`
 	QrisReference    string    `gorm:"column:qris_reference" json:"qris_reference"`
 	Total            float64   `gorm:"column:total;not null;default:0.00" json:"total"`
+	Details []TransactionDetail `json:"details" gorm:"foreignKey:TransactionID"`
 	CreatedAt        time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt        time.Time `gorm:"column:updated_at" json:"updated_at"`
 	CustomerName     string    `gorm:"column:customer_name" json:"customer_name"`

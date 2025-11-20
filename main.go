@@ -16,6 +16,8 @@ func main() {
 	r := gin.Default()
 
 	routes.BrandsRouter(r)
+	routes.DeviceRouter(r)
+	routes.TransactionRouter(r)
 
 	r.Run(":8000")
 }
