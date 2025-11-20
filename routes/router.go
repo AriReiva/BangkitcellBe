@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func BrandsRouter(r *gin.Engine) {
+func BrandsRouter(r *gin.RouterGroup) {
 	brandsGroup := r.Group("/brands")
 	{
 		brandsGroup.GET("/", controllers.GetAllBrands)
@@ -18,8 +18,9 @@ func BrandsRouter(r *gin.Engine) {
 	}
 }
 
-func DeviceRouter(r *gin.Engine) {
-	deviceGroup := r.Group("/device")
+
+func DeviceRouter(r *gin.RouterGroup) {
+	deviceGroup := r.Group("/devices")
 	{
 		deviceGroup.GET("/", controllers.GetAllDevice)
 		deviceGroup.GET("/:id", controllers.GetDeviceById)
@@ -29,7 +30,7 @@ func DeviceRouter(r *gin.Engine) {
 	}
 }
 
-func TransactionRouter(r *gin.Engine) {
+func TransactionRouter(r *gin.RouterGroup) {
 	transactionGroup := r.Group("/transactions")
 	{
 		transactionGroup.GET("/", controllers.GetAllTransaction)
@@ -40,7 +41,7 @@ func TransactionRouter(r *gin.Engine) {
 	}
 }
 
-func UserRouter(r *gin.Engine) {
+func UserRouter(r *gin.RouterGroup) {
 	transactionGroup := r.Group("/users")
 	{
 		transactionGroup.GET("/", controllers.GetAllUser)
@@ -52,7 +53,7 @@ func UserRouter(r *gin.Engine) {
 }
 
 
-func AuthRouter(r *gin.Engine) {
+func AuthRouter(r *gin.RouterGroup) {
 	AuthGroup := r.Group("/auth")
 	{
 		AuthGroup.POST("/register", controllers.RegisterUser)
@@ -66,7 +67,7 @@ func AuthRouter(r *gin.Engine) {
 	}
 }
 
-func StatsRouter(r *gin.Engine) {
+func StatsRouter(r *gin.RouterGroup) {
 	g := r.Group("/stats")
 	{
 		g.GET("/", controllers.StatsIndex)

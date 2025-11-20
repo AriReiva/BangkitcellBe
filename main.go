@@ -15,12 +15,16 @@ func main() {
 
 	r := gin.Default()
 
-	routes.BrandsRouter(r)
-	routes.DeviceRouter(r)
-	routes.TransactionRouter(r)
-	routes.UserRouter(r)
-	routes.AuthRouter(r)
-	routes.StatsRouter(r)
+	apiGroup := r.Group("/api")
+	{
+		routes.BrandsRouter(apiGroup)
+		routes.DeviceRouter(apiGroup)
+		routes.TransactionRouter(apiGroup)
+		routes.UserRouter(apiGroup)
+		routes.AuthRouter(apiGroup)
+		routes.StatsRouter(apiGroup)
+	}
 
+	
 	r.Run(":8000")
 }

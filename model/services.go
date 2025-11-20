@@ -17,6 +17,8 @@ type Service struct {
 	Deskripsi string    `gorm:"column:deskripsi" json:"deskripsi"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
+	Devices []Device `gorm:"many2many:device_service_variants;joinForeignKey:ServiceID;joinReferences:DeviceID"`
+	Pivot *DeviceServiceVariant `json:"pivot,omitempty" gorm:"-"`
 }
 
 // TableName Service's table name
