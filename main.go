@@ -20,6 +20,7 @@ func main() {
 	routes.TransactionRouter(r)
 	routes.UserRouter(r)
 	routes.AuthRouter(r)
+	routes.StatsRouter(r)
 
 	r.Run(":8000")
 }

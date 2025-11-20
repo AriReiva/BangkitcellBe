@@ -65,3 +65,12 @@ func AuthRouter(r *gin.Engine) {
 		})
 	}
 }
+
+func StatsRouter(r *gin.Engine) {
+	g := r.Group("/stats")
+	{
+		g.GET("/", controllers.StatsIndex)
+		g.GET("/report", controllers.StatsReport)
+		g.GET("/omset", controllers.GetOmset)
+	}
+}
