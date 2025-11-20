@@ -21,6 +21,8 @@ type DeviceServiceVariant struct {
 	Catatan   string    `gorm:"column:catatan" json:"catatan"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
+	Service Service `json:"service"`
+	Device  Device  `json:"device"`
 }
 
 // TableName DeviceServiceVariant's table name
