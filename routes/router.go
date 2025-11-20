@@ -2,6 +2,7 @@ package routes
 
 import (
 	"BangkitcellBe/controllers"
+	"BangkitcellBe/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,5 +37,31 @@ func TransactionRouter(r *gin.Engine) {
 		transactionGroup.POST("/", controllers.CreateTransaction)
 		transactionGroup.PATCH("/:id/payment", controllers.UpdateTransaction)
 		transactionGroup.DELETE("/:id", controllers.DeleteTransaction)
+	}
+}
+
+func UserRouter(r *gin.Engine) {
+	transactionGroup := r.Group("/users")
+	{
+		transactionGroup.GET("/", controllers.GetAllUser)
+		transactionGroup.GET("/:id", controllers.GetUserById)
+		transactionGroup.POST("/", controllers.CreateUser)
+		transactionGroup.PATCH("/:id/payment", controllers.UpdateUser)
+		transactionGroup.DELETE("/:id", controllers.DeleteUser)
+	}
+}
+
+
+func AuthRouter(r *gin.Engine) {
+	AuthGroup := r.Group("/auth")
+	{
+		AuthGroup.POST("/register", controllers.RegisterUser)
+		AuthGroup.POST("/login", controllers.LoginUser)
+
+		auth := AuthGroup.Group("/").Use(middleware.AuthMiddleware())
+		auth.POST("/logout", controllers.LogoutUser)
+		auth.GET("/me", func(c *gin.Context){
+			c.JSON(200, c.MustGet("user"))
+		})
 	}
 }
