@@ -38,3 +38,14 @@ func TransactionRouter(r *gin.Engine) {
 		transactionGroup.DELETE("/:id", controllers.DeleteTransaction)
 	}
 }
+
+func StatsRouter(r *gin.Engine) {
+
+	g := r.Group("/stats")
+	{
+		g.GET("/", controllers.StatsIndex)
+		g.GET("/report", controllers.StatsReport)
+		g.GET("/omset", controllers.GetOmset)
+	}
+}
+

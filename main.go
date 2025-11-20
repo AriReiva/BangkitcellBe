@@ -18,6 +18,7 @@ func main() {
 	routes.BrandsRouter(r)
 	routes.DeviceRouter(r)
 	routes.TransactionRouter(r)
+	routes.StatsRouter(r)
 
 	r.Run(":8000")
 }
