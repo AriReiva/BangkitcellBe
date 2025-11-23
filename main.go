@@ -5,6 +5,8 @@ import (
 	"BangkitcellBe/model"
 	"BangkitcellBe/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
+	"time"
 )
 
 func main() {
@@ -16,6 +18,16 @@ func main() {
 	config.DB.AutoMigrate(&model.DeviceServiceVariant{})
 
 	r := gin.Default()
+	// === CORS FIX ===
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+	// =================
 
 	apiGroup := r.Group("/api")
 	{
@@ -28,7 +40,6 @@ func main() {
 		routes.AuthRouter(apiGroup)
 		routes.StatsRouter(apiGroup)
 	}
-
 	
 	r.Run(":8000")
 }

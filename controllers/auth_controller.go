@@ -18,8 +18,8 @@ var JWT_SECRET = []byte(os.Getenv("JWT_SECRET"))
 func RegisterUser(c *gin.Context) {
 	var input struct {
 		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=6"`
-		Name     string `json:"name" binding:"required,min=6"`
+		Password string `json:"password" binding:"required,min=8"`
+		Name     string `json:"name" binding:"required"`
 		Role     string `json:"role"` // optional default operator
 	}
 
@@ -115,7 +115,7 @@ func LoginUser(c *gin.Context) {
 		"status":  true,
 		"message": "Login berhasil",
 		"token":   tokenString,
-		"user":    user,
+		"data":    user,
 	})
 }
 
