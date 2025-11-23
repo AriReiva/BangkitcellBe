@@ -47,7 +47,6 @@ func UserRouter(r *gin.RouterGroup) {
 		transactionGroup.GET("/:id", controllers.GetUserById)
 		transactionGroup.POST("/", controllers.CreateUser)
 		transactionGroup.PATCH("/:id/payment", controllers.UpdateUser)
-		transactionGroup.PUT("/:id", controllers.UpdateUser)
 		transactionGroup.DELETE("/:id", controllers.DeleteUser)
 	}
 }
