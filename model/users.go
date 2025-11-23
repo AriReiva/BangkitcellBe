@@ -15,7 +15,6 @@ type User struct {
 	ID              int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	Name            string    `gorm:"column:name;not null" json:"name"`
 	Email           string    `gorm:"column:email;not null" json:"email"`
-	EmailVerifiedAt time.Time `gorm:"column:email_verified_at" json:"email_verified_at"`
 	Password        string    `gorm:"column:password;not null" json:"password"`
 	Role            string    `gorm:"column:role;not null;default:operator" json:"role"`
 	RememberToken   string    `gorm:"column:remember_token" json:"remember_token"`

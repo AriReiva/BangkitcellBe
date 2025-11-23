@@ -22,9 +22,10 @@ type DeviceServiceVariant struct {
 	CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt  time.Time `json:"updated_at" gorm:"column:updated_at"`
 	
-	// Relationships
-	Device  Device  `json:"device" gorm:"foreignKey:DeviceID;references:ID"`
-	Service Service `json:"service" gorm:"foreignKey:ServiceID;references:ID"`
+		// Relationships
+	Device  *Device  `json:"device,omitempty" gorm:"-:all"`
+	Service *Service `json:"service,omitempty" gorm:"-:all"`
+
 }
 
 // TableName DeviceServiceVariant's table name

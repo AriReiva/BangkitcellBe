@@ -115,7 +115,7 @@ func LoginUser(c *gin.Context) {
 		"status":  true,
 		"message": "Login berhasil",
 		"token":   tokenString,
-		"data":    user,
+		"user":    user,
 	})
 }
 

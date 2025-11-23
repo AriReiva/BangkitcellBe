@@ -18,6 +18,7 @@ type Service struct {
 	CreatedAt   time.Time               `json:"created_at"`
 	UpdatedAt   time.Time               `json:"updated_at"`
 	Variants    []DeviceServiceVariant  `json:"variants,omitempty" gorm:"foreignKey:ServiceID"`
+	Pivot       *DeviceServiceVariant   `json:"pivot,omitempty" gorm:"foreignKey:ServiceID;references:ID"`
 }
 
 // TableName Service's table name

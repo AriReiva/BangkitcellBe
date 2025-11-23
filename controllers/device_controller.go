@@ -5,6 +5,7 @@ import (
 	"BangkitcellBe/model"
 	"net/http"
 	"strconv"
+	"BangkitcellBe/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -27,20 +28,39 @@ func GetDeviceById(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device ID"})
 		return
 	}
+	
 	var device model.Device
-	if err := config.DB.First(&device, id).Error; err != nil {
+
+	err = config.DB.
+		Preload("Services").
+		Preload("Pivots").
+		Preload("Brand").
+		First(&device, id).Error
+
+	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "Device not found"})
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	c.JSON(http.StatusOK, device)
+
+	// Hubungkan pivot ke tiap service
+	for i := range device.Services {
+		for j := range device.Pivots {
+			if device.Pivots[j].ServiceID == device.Services[i].ID {
+				device.Services[i].Pivot = &device.Pivots[j]
+			}
+		}
+	}
+
+	utils.RespondSuccess(c, device)
 }
+
 
 func CreateDevice(c *gin.Context) {
 	var device model.Device
@@ -59,13 +79,13 @@ func UpdateDevice(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device ID"})
 		return
 	}
 	var device model.Device
 	if err := config.DB.First(&device, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "Device not found"})
 		}
 		return
 	}
@@ -84,12 +104,12 @@ func DeleteDevice(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid device ID"})
 		return
 	}
 	if err := config.DB.Delete(&model.Device{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Brand deleted successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Device deleted successfully"})
 }
