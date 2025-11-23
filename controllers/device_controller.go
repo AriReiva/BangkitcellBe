@@ -3,7 +3,6 @@ package controllers
 import (
 	"BangkitcellBe/config"
 	"BangkitcellBe/model"
-	"BangkitcellBe/utils"
 	"net/http"
 	"strconv"
 
@@ -14,99 +13,82 @@ import (
 func GetAllDevice(c *gin.Context){
 	var device [] model.Device
 
-	if err := config.DB.Preload("Brand").Find(&device).Error;
+	if err := config.DB.Find(&device).Error;
 	err != nil {
-		utils.RespondError(c, http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	utils.RespondSuccess(c, device)
+	c.JSON(http.StatusOK, device)
 }
 
 func GetDeviceById(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		utils.RespondError(c, http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
 		return
 	}
-
 	var device model.Device
-
-	// Preload relasi
-	if err := config.DB.
-		Preload("Services").
-		Preload("Pivots").
-		Preload("Brand").
-		First(&device, id).
-		Error; err != nil {
+	if err := config.DB.First(&device, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			utils.RespondError(c, http.StatusNotFound, err)
+			c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
 		} else {
-			utils.RespondError(c, http.StatusInternalServerError, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	for i := range device.Services {
-		for j := range device.Pivots {
-			if device.Pivots[j].ServiceID == device.Services[i].ID {
-				device.Services[i].Pivot = &device.Pivots[j]
-			}
-		}
-	}
-
-	utils.RespondSuccess(c, device)
+	c.JSON(http.StatusOK, device)
 }
-
 
 func CreateDevice(c *gin.Context) {
 	var device model.Device
 	if err := c.ShouldBindJSON(&device); err != nil {
-		utils.RespondError(c, http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	if err := config.DB.Create(&device).Error; err != nil {
-		utils.RespondError(c, http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	utils.RespondSuccess(c, device)
+	c.JSON(http.StatusCreated, device)
 }
 
 func UpdateDevice(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		utils.RespondError(c, http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
 		return
 	}
 	var device model.Device
 	if err := config.DB.First(&device, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			utils.RespondError(c, http.StatusNotFound, err)
+			c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
 		}
 		return
 	}
 	if err := c.ShouldBindJSON(&device); err != nil {
-		utils.RespondError(c, http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	if err := config.DB.Save(&device).Error; err != nil {
-		utils.RespondError(c, http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	utils.RespondSuccess(c, device)
+	c.JSON(http.StatusOK, device)
 }
 
 func DeleteDevice(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		utils.RespondError(c, http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
 		return
 	}
 	if err := config.DB.Delete(&model.Device{}, id).Error; err != nil {
-		utils.RespondError(c, http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	utils.RespondSuccess(c, "Device deleted successfully")
+	c.JSON(http.StatusOK, gin.H{"message": "Brand deleted successfully"})
 }
