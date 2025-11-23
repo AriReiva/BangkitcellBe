@@ -12,17 +12,19 @@ const TableNameDeviceServiceVariant = "device_service_variants"
 
 // DeviceServiceVariant mapped from table <device_service_variants>
 type DeviceServiceVariant struct {
-	ID        int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	DeviceID  int64     `gorm:"column:device_id;not null" json:"device_id"`
-	ServiceID int64     `gorm:"column:service_id;not null" json:"service_id"`
-	TipePart  string    `gorm:"column:tipe_part" json:"tipe_part"`
-	HargaMin  float64   `gorm:"column:harga_min;not null;default:0.00" json:"harga_min"`
-	HargaMax  float64   `gorm:"column:harga_max;not null;default:0.00" json:"harga_max"`
-	Catatan   string    `gorm:"column:catatan" json:"catatan"`
-	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
-	Service *Service `json:"service,omitempty"`
-	Device  *Device  `json:"device,omitempty"`
+	ID         uint      `json:"id" gorm:"primaryKey"`
+	DeviceID   uint      `json:"device_id" gorm:"column:device_id"`
+	ServiceID  uint      `json:"service_id" gorm:"column:service_id"`
+	TipePart   *string   `json:"tipe_part,omitempty" gorm:"column:tipe_part"`
+	HargaMin   float64   `json:"harga_min" gorm:"column:harga_min"`
+	HargaMax   float64   `json:"harga_max" gorm:"column:harga_max"`
+	Catatan    *string   `json:"catatan,omitempty" gorm:"column:catatan"`
+	CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt  time.Time `json:"updated_at" gorm:"column:updated_at"`
+	
+	// Relationships
+	Device  Device  `json:"device" gorm:"foreignKey:DeviceID;references:ID"`
+	Service Service `json:"service" gorm:"foreignKey:ServiceID;references:ID"`
 }
 
 // TableName DeviceServiceVariant's table name

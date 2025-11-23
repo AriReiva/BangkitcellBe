@@ -75,3 +75,25 @@ func StatsRouter(r *gin.RouterGroup) {
 		g.GET("/omset", controllers.GetOmset)
 	}
 }
+
+func DeviceServiceVariantRouter(r *gin.RouterGroup){
+	dsvGroup := r.Group("/variants")
+	{
+		dsvGroup.GET("/", controllers.GetAllDeviceServiceVariant)
+		// dsvGroup.GET("/:id", controllers.GetDeviceServiceByIdVariant)
+		dsvGroup.POST("/", controllers.CreateDeviceServiceVariant)
+		dsvGroup.PUT("/:id", controllers.UpdateDeviceServiceVariant)
+		dsvGroup.DELETE("/:id", controllers.DeleteDeviceServiceVariant)
+	}
+}
+
+func ServiceRouter(r *gin.RouterGroup){
+	serviceGroup := r.Group("/services")
+	{
+		serviceGroup.GET("/", controllers.GetAllService)
+		serviceGroup.GET("/:id", controllers.GetServiceById)
+		serviceGroup.POST("/", controllers.CreateService)
+		serviceGroup.PUT("/:id", controllers.UpdateService)
+		serviceGroup.DELETE("/:id", controllers.DeleteService)
+	}
+}

@@ -12,13 +12,12 @@ const TableNameService = "services"
 
 // Service mapped from table <services>
 type Service struct {
-	ID        int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Nama      string    `gorm:"column:nama;not null" json:"nama"`
-	Deskripsi string    `gorm:"column:deskripsi" json:"deskripsi"`
-	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
-	Devices []Device `gorm:"many2many:device_service_variants;joinForeignKey:ServiceID;joinReferences:DeviceID"`
-	Pivot *DeviceServiceVariant `json:"pivot,omitempty" gorm:"-"`
+	ID          uint                    `json:"id" gorm:"primaryKey"`
+	Nama        string                  `json:"nama"`
+	Deskripsi   string                  `json:"deskripsi"`
+	CreatedAt   time.Time               `json:"created_at"`
+	UpdatedAt   time.Time               `json:"updated_at"`
+	Variants    []DeviceServiceVariant  `json:"variants,omitempty" gorm:"foreignKey:ServiceID"`
 }
 
 // TableName Service's table name

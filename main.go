@@ -35,6 +35,8 @@ func main() {
 		routes.UserRouter(apiGroup)
 		routes.AuthRouter(apiGroup)
 		routes.StatsRouter(apiGroup)
+		routes.DeviceServiceVariantRouter(apiGroup)
+		routes.ServiceRouter(apiGroup)
 	}
 	
 	r.Run(":8000")
