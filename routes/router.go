@@ -18,13 +18,12 @@ func BrandsRouter(r *gin.RouterGroup) {
 	}
 }
 
-
 func DeviceRouter(r *gin.RouterGroup) {
 	deviceGroup := r.Group("/devices")
 	{
 		deviceGroup.GET("/", controllers.GetAllDevice)
 		deviceGroup.GET("/:id", controllers.GetDeviceById)
-		deviceGroup.POST("", controllers.CreateDevice)
+		deviceGroup.POST("/", controllers.CreateDevice)
 		deviceGroup.PUT("/:id", controllers.UpdateDevice)
 		deviceGroup.DELETE("/:id", controllers.DeleteDevice)
 	}
@@ -48,6 +47,7 @@ func UserRouter(r *gin.RouterGroup) {
 		transactionGroup.GET("/:id", controllers.GetUserById)
 		transactionGroup.POST("/", controllers.CreateUser)
 		transactionGroup.PATCH("/:id/payment", controllers.UpdateUser)
+		transactionGroup.PUT("/:id", controllers.UpdateUser)
 		transactionGroup.DELETE("/:id", controllers.DeleteUser)
 	}
 }

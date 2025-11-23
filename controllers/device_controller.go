@@ -10,16 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetAllDevice(c *gin.Context){
-	var device [] model.Device
+func GetAllDevice(c *gin.Context) {
+	var devices []model.Device
 
-	if err := config.DB.Find(&device).Error;
-	err != nil {
+	if err := config.DB.Find(&devices).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, device)
+	c.JSON(http.StatusOK, gin.H{
+		"data":   devices,
+	})
 }
 
 func GetDeviceById(c *gin.Context) {
