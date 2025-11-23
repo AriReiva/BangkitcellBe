@@ -19,11 +19,11 @@ func BrandsRouter(r *gin.Engine) {
 }
 
 func DeviceRouter(r *gin.Engine) {
-	deviceGroup := r.Group("/device")
+	deviceGroup := r.Group("/devices")
 	{
 		deviceGroup.GET("/", controllers.GetAllDevice)
 		deviceGroup.GET("/:id", controllers.GetDeviceById)
-		deviceGroup.POST("/", controllers.CreateDevice)
+		deviceGroup.POST("", controllers.CreateDevice)
 		deviceGroup.PUT("/:id", controllers.UpdateDevice)
 		deviceGroup.DELETE("/:id", controllers.DeleteDevice)
 	}
@@ -67,10 +67,10 @@ func AuthRouter(r *gin.Engine) {
 }
 
 func StatsRouter(r *gin.Engine) {
-	g := r.Group("/stats")
-	{
-		g.GET("/", controllers.StatsIndex)
-		g.GET("/report", controllers.StatsReport)
-		g.GET("/omset", controllers.GetOmset)
-	}
+    statsGroup := r.Group("/stats")
+    {
+        statsGroup.GET("/", controllers.StatsIndex)          // GET /stats
+        // statsGroup.GET("/report", controllers.StatsReport)   // GET /stats/report
+        // statsGroup.GET("/omset", controllers.GetOmset)       // GET /stats/omset
+    }
 }
