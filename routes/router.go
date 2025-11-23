@@ -32,9 +32,9 @@ func DeviceRouter(r *gin.RouterGroup) {
 func TransactionRouter(r *gin.RouterGroup) {
 	transactionGroup := r.Group("/transactions")
 	{
-		transactionGroup.GET("/", controllers.GetAllTransaction)
+		transactionGroup.GET("", controllers.GetAllTransaction)
 		transactionGroup.GET("/:id", controllers.GetTransactionById)
-		transactionGroup.POST("/", controllers.CreateTransaction)
+		transactionGroup.POST("", controllers.CreateTransaction)
 		transactionGroup.PATCH("/:id/payment", controllers.UpdateTransaction)
 		transactionGroup.DELETE("/:id", controllers.DeleteTransaction)
 	}

@@ -10,23 +10,22 @@ import (
 
 const TableNameDeviceServiceVariant = "device_service_variants"
 
-// DeviceServiceVariant mapped from table <device_service_variants>
 type DeviceServiceVariant struct {
 	ID         uint      `json:"id" gorm:"primaryKey"`
-	DeviceID   uint      `json:"device_id" gorm:"column:device_id"`
-	ServiceID  uint      `json:"service_id" gorm:"column:service_id"`
-	TipePart   *string   `json:"tipe_part,omitempty" gorm:"column:tipe_part"`
-	HargaMin   float64   `json:"harga_min" gorm:"column:harga_min"`
-	HargaMax   float64   `json:"harga_max" gorm:"column:harga_max"`
-	Catatan    *string   `json:"catatan,omitempty" gorm:"column:catatan"`
-	CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`
-	UpdatedAt  time.Time `json:"updated_at" gorm:"column:updated_at"`
-	
-		// Relationships
-	Device  *Device  `json:"device,omitempty" gorm:"-:all"`
-	Service *Service `json:"service,omitempty" gorm:"-:all"`
+	DeviceID   uint      `json:"device_id"`
+	ServiceID  uint      `json:"service_id"`
+	TipePart   *string   `json:"tipe_part,omitempty"`
+	HargaMin   float64   `json:"harga_min"`
+	HargaMax   float64   `json:"harga_max"`
+	Catatan    *string   `json:"catatan,omitempty"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 
+	// Relationships
+	Device  Device  `json:"device,omitempty" gorm:"foreignKey:DeviceID;references:ID"`
+	Service Service `json:"service,omitempty" gorm:"foreignKey:ServiceID;references:ID"`
 }
+
 
 // TableName DeviceServiceVariant's table name
 func (*DeviceServiceVariant) TableName() string {
