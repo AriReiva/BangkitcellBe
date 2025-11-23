@@ -18,6 +18,27 @@ func BrandsRouter(r *gin.RouterGroup) {
 	}
 }
 
+func DeviceServiceVariantRouter(r *gin.RouterGroup){
+	dsvGroup := r.Group("/variants")
+	{
+		dsvGroup.GET("/", controllers.GetAllDeviceService)
+		dsvGroup.GET("/:id", controllers.GetDeviceServiceById)
+		dsvGroup.POST("/", controllers.CreateDeviceService)
+		dsvGroup.PUT("/:id", controllers.UpdateDeviceService)
+		dsvGroup.DELETE("/:id", controllers.DeleteDeviceService)
+	}
+}
+
+func ServiceRouter(r *gin.RouterGroup){
+	serviceGroup := r.Group("/services")
+	{
+		serviceGroup.GET("/", controllers.GetAllService)
+		serviceGroup.GET("/:id", controllers.GetServiceById)
+		serviceGroup.POST("/", controllers.CreateService)
+		serviceGroup.PUT("/:id", controllers.UpdateService)
+		serviceGroup.DELETE("/:id", controllers.DeleteService)
+	}
+}
 
 func DeviceRouter(r *gin.RouterGroup) {
 	deviceGroup := r.Group("/devices")

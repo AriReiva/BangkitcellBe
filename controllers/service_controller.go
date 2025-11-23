@@ -11,34 +11,41 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetAllDevice(c *gin.Context){
-	var device [] model.Device
+// GET ALL SERVICE (dengan optional search)
+func GetAllService(c *gin.Context) {
+	var services []model.Service
+	search := c.Query("search")
 
-	if err := config.DB.Preload("Brand").Find(&device).Error;
-	err != nil {
+	query := config.DB.Model(&model.Service{})
+
+	if search != "" {
+		query = query.Where("nama LIKE ?", "%"+search+"%")
+	}
+
+	if err := query.Find(&services).Error; err != nil {
 		utils.RespondError(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.RespondSuccess(c, device)
+	utils.RespondSuccess(c, services)
 }
 
-func GetDeviceById(c *gin.Context) {
+// GET SERVICE BY ID (dengan relasi Variants dan Device)
+func GetServiceById(c *gin.Context) {
 	idParam := c.Param("id")
+
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
 
-	var device model.Device
+	var service model.Service
 
 	if err := config.DB.
-		Preload("Services").
-		Preload("Pivots").
-		Preload("Brand").
-		First(&device, id).
-		Error; err != nil {
+		Preload("Variants.Device").
+		First(&service, id).Error; err != nil {
+
 		if err == gorm.ErrRecordNotFound {
 			utils.RespondError(c, http.StatusNotFound, err)
 		} else {
@@ -46,66 +53,73 @@ func GetDeviceById(c *gin.Context) {
 		}
 		return
 	}
-	for i := range device.Services {
-		for j := range device.Pivots {
-			if device.Pivots[j].ServiceID == device.Services[i].ID {
-				device.Services[i].Pivot = &device.Pivots[j]
-			}
-		}
-	}
 
-	utils.RespondSuccess(c, device)
+	utils.RespondSuccess(c, service)
 }
 
+// CREATE SERVICE
+func CreateService(c *gin.Context) {
+	var service model.Service
 
-func CreateDevice(c *gin.Context) {
-	var device model.Device
-	if err := c.ShouldBindJSON(&device); err != nil {
+	if err := c.ShouldBindJSON(&service); err != nil {
 		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
-	if err := config.DB.Create(&device).Error; err != nil {
+
+	if err := config.DB.Create(&service).Error; err != nil {
 		utils.RespondError(c, http.StatusInternalServerError, err)
 		return
 	}
-	utils.RespondSuccess(c, device)
+
+	utils.RespondSuccess(c, service)
 }
 
-func UpdateDevice(c *gin.Context) {
+// UPDATE SERVICE
+func UpdateService(c *gin.Context) {
 	idParam := c.Param("id")
+
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
-	var device model.Device
-	if err := config.DB.First(&device, id).Error; err != nil {
+
+	var service model.Service
+
+	if err := config.DB.First(&service, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			utils.RespondError(c, http.StatusNotFound, err)
 		}
 		return
 	}
-	if err := c.ShouldBindJSON(&device); err != nil {
+
+	if err := c.ShouldBindJSON(&service); err != nil {
 		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
-	if err := config.DB.Save(&device).Error; err != nil {
+
+	if err := config.DB.Save(&service).Error; err != nil {
 		utils.RespondError(c, http.StatusInternalServerError, err)
 		return
 	}
-	utils.RespondSuccess(c, device)
+
+	utils.RespondSuccess(c, service)
 }
 
-func DeleteDevice(c *gin.Context) {
+// DELETE SERVICE
+func DeleteService(c *gin.Context) {
 	idParam := c.Param("id")
+
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
 		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
-	if err := config.DB.Delete(&model.Device{}, id).Error; err != nil {
+
+	if err := config.DB.Delete(&model.Service{}, id).Error; err != nil {
 		utils.RespondError(c, http.StatusInternalServerError, err)
 		return
 	}
-	utils.RespondSuccess(c, "Device deleted successfully")
+
+	utils.RespondSuccess(c, "Service deleted successfully")
 }

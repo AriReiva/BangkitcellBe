@@ -14,13 +14,13 @@ const TableNameDevice = "devices"
 type Device struct {
 	ID        int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	BrandID   int64     `gorm:"column:brand_id;not null" json:"brand_id"`
-	Model     string    `gorm:"column:model;not null" json:"model"`
-	Tipe      string    `gorm:"column:tipe" json:"tipe"`
+	Model     string    `gorm:"column:model;not null" json:"model,omitempty"`
+	Tipe      string    `gorm:"column:tipe" json:"tipe,omitempty"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
 	Brand     Brand     `json:"brand" gorm:"foreignKey:BrandID"`
-	Services []Service                `gorm:"many2many:device_service_variants;joinForeignKey:DeviceID;joinReferences:ServiceID" json:"services"`
-	Pivots   []DeviceServiceVariant   `gorm:"foreignKey:DeviceID"`
+	Services []Service                `gorm:"many2many:device_service_variants;joinForeignKey:DeviceID;joinReferences:ServiceID" json:"services,omitempty"`
+	Pivots   []DeviceServiceVariant   `gorm:"foreignKey:DeviceID" json:"pivots,omitempty"`
 }
 
 // TableName Device's table name

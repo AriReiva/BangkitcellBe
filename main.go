@@ -12,6 +12,8 @@ func main() {
 
 	config.DB.AutoMigrate(&model.Brand{})
 	config.DB.AutoMigrate(&model.Device{})
+	config.DB.AutoMigrate(&model.Service{})
+	config.DB.AutoMigrate(&model.DeviceServiceVariant{})
 
 	r := gin.Default()
 
@@ -20,6 +22,8 @@ func main() {
 		routes.BrandsRouter(apiGroup)
 		routes.DeviceRouter(apiGroup)
 		routes.TransactionRouter(apiGroup)
+		routes.DeviceServiceVariantRouter(apiGroup)
+		routes.ServiceRouter(apiGroup)
 		routes.UserRouter(apiGroup)
 		routes.AuthRouter(apiGroup)
 		routes.StatsRouter(apiGroup)

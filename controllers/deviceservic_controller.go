@@ -5,7 +5,7 @@ import(
 	"BangkitcellBe/model"
 	"net/http"
 	"strconv"
-
+	"BangkitcellBe/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -19,7 +19,7 @@ func GetAllDeviceService(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusOK, dsv)
+	utils.RespondSuccess(c, dsv)
 }
 
 
@@ -27,32 +27,32 @@ func GetDeviceServiceById(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid brand ID"})
+		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
 	var dsv model.DeviceServiceVariant
 	if err := config.DB.First(&dsv, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
+			utils.RespondError(c, http.StatusNotFound, err)
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			utils.RespondError(c, http.StatusInternalServerError, err)
 		}
 		return
 	}
-	c.JSON(http.StatusOK, dsv)
+	utils.RespondSuccess(c, dsv)
 }
 
 func CreateDeviceService(c *gin.Context) {
 	var dsv model.DeviceServiceVariant
 	if err := c.ShouldBindJSON(&dsv); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		utils.RespondError(c, http.StatusBadRequest, err)
 		return
 	}
 	if err := config.DB.Create(&dsv).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		utils.RespondError(c, http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusCreated, dsv)
+	utils.RespondSuccess(c, dsv)
 }
 
 func UpdateDeviceService(c *gin.Context) {
