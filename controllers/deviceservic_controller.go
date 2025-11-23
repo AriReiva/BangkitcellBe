@@ -19,7 +19,10 @@ func GetAllDeviceService(c *gin.Context){
 		return
 	}
 
-	c.JSON(http.StatusOK, dsv)
+	c.JSON(http.StatusOK,gin.H{
+		"success"	: true,
+		"data": dsv,
+	})
 }
 
 
