@@ -17,6 +17,7 @@ func main() {
 
 	r := gin.Default()
 
+<<<<<<< HEAD
 	// === CORS FIX ===
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
@@ -34,6 +35,18 @@ func main() {
 	routes.UserRouter(r)
 	routes.AuthRouter(r)
 	routes.StatsRouter(r)
+=======
+	apiGroup := r.Group("/api")
+	{
+		routes.BrandsRouter(apiGroup)
+		routes.DeviceRouter(apiGroup)
+		routes.TransactionRouter(apiGroup)
+		routes.UserRouter(apiGroup)
+		routes.AuthRouter(apiGroup)
+		routes.StatsRouter(apiGroup)
+	}
+>>>>>>> 6f0d43d239f1553bf6285cd4b7721fb49cea7f15
 
+	
 	r.Run(":8000")
 }
