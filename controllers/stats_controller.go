@@ -19,104 +19,105 @@ func NewStatsController() *StatsController {
 	return &StatsController{DB: config.DB}
 }
 
-////////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 // ================ INDEX =========================
-////////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 func StatsIndex(c *gin.Context) {
-    ctrl := NewStatsController()
-    db := ctrl.DB
+	ctrl := NewStatsController()
+	db := ctrl.DB
 
-    var totalServices, totalBrands, totalDevices, totalTransactions, totalUsers int64
-    var totalRevenue float64
+	var totalServices, totalBrands, totalDevices, totalTransactions, totalUsers int64
+	var totalRevenue float64
 
-    // Error handling sederhana
-    if err := db.Model(&model.Service{}).Count(&totalServices).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to count services: " + err.Error()})
-        return
-    }
+	// Error handling sederhana
+	if err := db.Model(&model.Service{}).Count(&totalServices).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to count services: " + err.Error()})
+		return
+	}
 
-    if err := db.Model(&model.Brand{}).Count(&totalBrands).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to count brands: " + err.Error()})
-        return
-    }
+	if err := db.Model(&model.Brand{}).Count(&totalBrands).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to count brands: " + err.Error()})
+		return
+	}
 
-    if err := db.Model(&model.Device{}).Count(&totalDevices).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to count devices: " + err.Error()})
-        return
-    }
+	if err := db.Model(&model.Device{}).Count(&totalDevices).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to count devices: " + err.Error()})
+		return
+	}
 
-    if err := db.Model(&model.Transaction{}).Where("status = ?", "pending").Count(&totalTransactions).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to count transactions: " + err.Error()})
-        return
-    }
+	if err := db.Model(&model.Transaction{}).Where("status = ?", "pending").Count(&totalTransactions).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to count transactions: " + err.Error()})
+		return
+	}
 
-    if err := db.Model(&model.User{}).Count(&totalUsers).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to count users: " + err.Error()})
-        return
-    }
+	if err := db.Model(&model.User{}).Count(&totalUsers).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to count users: " + err.Error()})
+		return
+	}
 
-    if err := db.Model(&model.Transaction{}).
-        Where("status = ?", "success").
-        Select("COALESCE(sum(total),0)").Scan(&totalRevenue).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to calculate revenue: " + err.Error()})
-        return
-    }
+	if err := db.Model(&model.Transaction{}).
+		Where("status = ?", "success").
+		Select("COALESCE(sum(total),0)").Scan(&totalRevenue).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to calculate revenue: " + err.Error()})
+		return
+	}
 
-    // Sales Data
-    var salesData []struct {
-        Date         time.Time `json:"date"`
-        TotalRevenue float64   `json:"total_revenue"`
-    }
-    if err := db.Raw(`
+	// Sales Data
+	var salesData []struct {
+		Date         time.Time `json:"date"`
+		TotalRevenue float64   `json:"total_revenue"`
+	}
+	if err := db.Raw(`
         SELECT DATE(created_at) AS date, SUM(total) AS total_revenue
         FROM transactions
+        WHERE status = "success"
         GROUP BY DATE(created_at)
         ORDER BY DATE(created_at)
     `).Scan(&salesData).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to get sales data: " + err.Error()})
-        return
-    }
+		c.JSON(500, gin.H{"error": "Failed to get sales data: " + err.Error()})
+		return
+	}
 
-    // Device distribution
-    var deviceDistribution []struct {
-        Name  string `json:"name"`
-        Value int64  `json:"value"`
-    }
-    if err := db.Raw(`
+	// Device distribution
+	var deviceDistribution []struct {
+		Name  string `json:"name"`
+		Value int64  `json:"value"`
+	}
+	if err := db.Raw(`
         SELECT brands.nama AS name, COUNT(devices.id) AS value
         FROM devices
         JOIN brands ON devices.brand_id = brands.id
         GROUP BY brands.id, brands.nama
     `).Scan(&deviceDistribution).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to get device distribution: " + err.Error()})
-        return
-    }
+		c.JSON(500, gin.H{"error": "Failed to get device distribution: " + err.Error()})
+		return
+	}
 
-    // Recent activities (1 month)
-    var recentActivities []model.Transaction
-    if err := db.Where("created_at >= ?", time.Now().AddDate(0, -1, 0)).
-        Order("created_at DESC").
-        Find(&recentActivities).Error; err != nil {
-        c.JSON(500, gin.H{"error": "Failed to get recent activities: " + err.Error()})
-        return
-    }
+	// Recent activities (1 month)
+	var recentActivities []model.Transaction
+	if err := db.Where("created_at >= ?", time.Now().AddDate(0, -1, 0)).
+		Order("created_at DESC").
+		Find(&recentActivities).Error; err != nil {
+		c.JSON(500, gin.H{"error": "Failed to get recent activities: " + err.Error()})
+		return
+	}
 
-    c.JSON(200, gin.H{
-        "total_services":      totalServices,
-        "total_brands":        totalBrands,
-        "total_devices":       totalDevices,
-        "total_transactions":  totalTransactions,
-        "total_users":         totalUsers,
-        "total_revenue":       totalRevenue,
-        "sales_data":          salesData,
-        "device_distribution": deviceDistribution,
-        "recent_activities":   recentActivities,
-    })
+	c.JSON(200, gin.H{
+		"total_services":      totalServices,
+		"total_brands":        totalBrands,
+		"total_devices":       totalDevices,
+		"total_transactions":  totalTransactions,
+		"total_users":         totalUsers,
+		"total_revenue":       totalRevenue,
+		"sales_data":          salesData,
+		"device_distribution": deviceDistribution,
+		"recent_activities":   recentActivities,
+	})
 }
 
-////////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 // ================ REPORT ========================
-////////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 func StatsReport(c *gin.Context) {
 	ctrl := NewStatsController()
 	db := ctrl.DB
@@ -134,11 +135,11 @@ func StatsReport(c *gin.Context) {
 
 	// Sales per month
 	var salesData []struct {
-		Year         int    `json:"year"`
-		MonthNumber  int    `json:"month_number"`
-		Month        string `json:"month"`
+		Year         int     `json:"year"`
+		MonthNumber  int     `json:"month_number"`
+		Month        string  `json:"month"`
 		Revenue      float64 `json:"revenue"`
-		Transactions int64  `json:"transactions"`
+		Transactions int64   `json:"transactions"`
 	}
 	db.Raw(`
 		SELECT 
@@ -178,16 +179,16 @@ func StatsReport(c *gin.Context) {
 	`).Scan(&servicePerformance)
 
 	utils.RespondSuccess(c, gin.H{
-		"salesData":         salesData,
+		"salesData":          salesData,
 		"servicePerformance": servicePerformance,
-		"totalRevenue":      totalRevenue,
-		"totalTransactions": totalTransactions,
+		"totalRevenue":       totalRevenue,
+		"totalTransactions":  totalTransactions,
 	})
 }
 
-////////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 // ================ GET OMSET ========================
-////////////////////////////////////////////////////
+// //////////////////////////////////////////////////
 func GetOmset(c *gin.Context) {
 	ctrl := NewStatsController()
 	db := ctrl.DB
