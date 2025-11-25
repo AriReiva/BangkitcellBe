@@ -21,9 +21,9 @@ func BrandsRouter(r *gin.RouterGroup) {
 func DeviceRouter(r *gin.RouterGroup) {
 	deviceGroup := r.Group("/devices")
 	{
-		deviceGroup.GET("/", controllers.GetAllDevice)
+		deviceGroup.GET("", controllers.GetAllDevice)
 		deviceGroup.GET("/:id", controllers.GetDeviceById)
-		deviceGroup.POST("/", controllers.CreateDevice)
+		deviceGroup.POST("", controllers.CreateDevice)
 		deviceGroup.PUT("/:id", controllers.UpdateDevice)
 		deviceGroup.DELETE("/:id", controllers.DeleteDevice)
 	}
